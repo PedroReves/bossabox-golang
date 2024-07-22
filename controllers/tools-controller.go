@@ -5,7 +5,6 @@ import (
 	"github.com/PedroReves/bossabox-golang/db"
 	"github.com/PedroReves/bossabox-golang/model"
 	"github.com/gin-gonic/gin"
-	_ "github.com/joho/godotenv/autoload"
 	"net/http"
 )
 
