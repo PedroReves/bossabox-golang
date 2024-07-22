@@ -2,21 +2,15 @@ package controllers
 
 import (
 	"context"
-	"net/http"
-	"os"
-
+	"github.com/PedroReves/bossabox-golang/db"
 	"github.com/PedroReves/bossabox-golang/model"
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
 	_ "github.com/joho/godotenv/autoload"
+	"net/http"
 )
 
 func GetTools(g *gin.Context) {
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
-
-	if err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
-	}
+	conn := db.InitConn(g)
 
 	defer conn.Close(context.Background())
 
@@ -53,15 +47,11 @@ func CreateTool(g *gin.Context) {
 		g.JSON(http.StatusBadRequest, gin.H{"Bad Request": err.Error()})
 	}
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
-
-	if err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
-	}
+	conn := db.InitConn(g)
 
 	defer conn.Close(context.Background())
 
-	_, err = conn.Exec(context.Background(), "INSERT INTO tools (title, link, description, tags) VALUES ($1, $2, $3, $4)", &tool.Title, &tool.Link, &tool.Description, &tool.Tags)
+	_, err := conn.Exec(context.Background(), "INSERT INTO tools (title, link, description, tags) VALUES ($1, $2, $3, $4)", &tool.Title, &tool.Link, &tool.Description, &tool.Tags)
 
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
@@ -73,17 +63,13 @@ func CreateTool(g *gin.Context) {
 func DeleteTool(g *gin.Context) {
 	id := g.Param("id")
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
-
-	if err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
-	}
+	conn := db.InitConn(g)
 
 	defer conn.Close(context.Background())
 
 	var count int
 
-	err = conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM tools WHERE id = $1", id).Scan(&count)
+	err := conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM tools WHERE id = $1", id).Scan(&count)
 
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
@@ -107,11 +93,7 @@ func DeleteTool(g *gin.Context) {
 func GetFilteredTool(g *gin.Context) {
 	name := g.Query("name")
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
-
-	if err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
-	}
+	conn := db.InitConn(g)
 
 	defer conn.Close(context.Background())
 
