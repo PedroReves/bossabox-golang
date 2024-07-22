@@ -12,7 +12,7 @@ func InitConn(g *gin.Context) *pgx.Conn {
 	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 
 	if err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
+		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": "Unable to Connect to db!"})
 	}
 
 	return conn
