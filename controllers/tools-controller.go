@@ -22,19 +22,12 @@ func GetTools(g *gin.Context) {
 
 	var tools []model.Tool
 	for rows.Next() {
-		var id, title, link, description string
-		var tags []string
-		if err := rows.Scan(&id, &title, &link, &description, &tags); err != nil {
+		var tool model.Tool
+		if err := rows.Scan(&tool.Id, &tool.Title, &tool.Link, &tool.Description, &tool.Tags); err != nil {
 			g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
 		}
 
-		tools = append(tools, model.Tool{
-			Id:          id,
-			Title:       title,
-			Link:        link,
-			Description: description,
-			Tags:        tags,
-		})
+		tools = append(tools, tool)
 	}
 
 	g.JSON(http.StatusOK, tools)
@@ -105,19 +98,11 @@ func GetFilteredTool(g *gin.Context) {
 
 	var tools []model.Tool
 	for rows.Next() {
-
-		var id, link, title, description string
-		var tags []string
-		if err := rows.Scan(&id, &link, &description, &title, &tags); err != nil {
+		var tool model.Tool
+		if err := rows.Scan(&tool.Id, &tool.Link, &tool.Description, &tool.Title, &tool.Tags); err != nil {
 			g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
 		}
-		tools = append(tools, model.Tool{
-			Id:          id,
-			Title:       title,
-			Link:        link,
-			Description: description,
-			Tags:        tags,
-		})
+		tools = append(tools, tool)
 	}
 
 	g.JSON(http.StatusOK, tools)
