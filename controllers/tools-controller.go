@@ -2,14 +2,17 @@ package controllers
 
 import (
 	"context"
+	"net/http"
+	"os"
+
 	"github.com/PedroReves/bossabox-golang/model"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
-	"net/http"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func GetTools(g *gin.Context) {
-	conn, err := pgx.Connect(context.Background(), "postgres://docker:root@localhost:5432/tools")
+	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
@@ -50,7 +53,7 @@ func CreateTool(g *gin.Context) {
 		g.JSON(http.StatusBadRequest, gin.H{"Bad Request": err.Error()})
 	}
 
-	conn, err := pgx.Connect(context.Background(), "postgres://docker:root@localhost:5432/tools")
+	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
@@ -70,7 +73,7 @@ func CreateTool(g *gin.Context) {
 func DeleteTool(g *gin.Context) {
 	id := g.Param("id")
 
-	conn, err := pgx.Connect(context.Background(), "postgres://docker:root@localhost:5432/tools")
+	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
@@ -104,7 +107,7 @@ func DeleteTool(g *gin.Context) {
 func GetFilteredTool(g *gin.Context) {
 	name := g.Query("name")
 
-	conn, err := pgx.Connect(context.Background(), "postgres://docker:root@localhost:5432/tools")
+	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
 
 	if err != nil {
 		g.JSON(http.StatusInternalServerError, gin.H{"Internal Server Error": err.Error()})
